@@ -22,11 +22,42 @@ Fill this in once. A worker with context knows. A worker without it guesses.
 
 | When the operator asks for... | Use this |
 |---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+| What needs attention, what is overdue or expired | `/attention` |
+| The change register, open changes | `/register`, `/open` |
+| Who still has to sign off | `/approvals` |
+| Temporary or emergency changes in place | `/temporary` |
+| Open or overdue actions | `/actions`, `/overdue` |
+| Safety case changes and regulator notices | `/safety-case` |
+| How long changes take, by site | `/stats` |
+| Who holds the most actions | `/workload` |
+| Are we compliant | `/compliance` |
+| Everything about one change | `/change` |
+| Raise a change | `/raise` |
+| Send it for review | `/submit` |
+| Record a risk review | `/add-review` |
+| Record a sign-off or rejection | `/approve` |
+| Add or close an action | `/add-action`, `/complete-action` |
+| Record a regulator notice | `/notify-regulator` |
+| Record the pre-start-up safety review | `/pssr` |
+| Put a change into operation | `/start-up` |
+| Extend a temporary change | `/extend` |
+| Close out, reject or cancel a change | `/close`, `/reject`, `/cancel` |
+| Bring data across from Intelex | `/import` |
+| A full snapshot | `/export` |
+| A change record for the file | `/draft-moc-pack` |
+| The Monday review | `/weekly-review` |
+| Sites, people, sign-off rules, the log | `/sites`, `/people`, `/rules`, `/activity` |
+| Change a field, a role or a rule | `/customise` |
+| A new report | `/new-view` |
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+If an ask fits nothing here, run the CLI directly (`npm run moc -- help`) and then propose a new command for it.
 
 ## Hard rules
+
+- A change goes into operation only through `start-up`, which checks every gate. Never set a status by hand to get round a gate.
+- Record only what happened: a sign-off a person gave, a review that was held, a notice that was sent. Never fill a gap to clear a finding.
+- Sign-offs and the activity log are history. A wrong entry is corrected by a new entry and a note, never an overwrite.
+- This system records regulator notices; it never sends one. Whether a change needs a notice is the operator's call, with docs/compliance.md as the reference.
 
 - Never send email or messages from here. Draft to `drafts/`, a person sends.
 - Never delete records without an explicit yes in this session. Prefer marking closed or archived.

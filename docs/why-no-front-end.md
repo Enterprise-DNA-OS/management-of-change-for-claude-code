@@ -19,6 +19,6 @@ That layer used to be the whole product, because talking to a database was hard.
 
 ## Who this fits
 
-Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your team needs a screen to look at all day, keep Intelex. If you need the answers more than the screens, this is cheaper, faster and yours.
+Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your team needs a screen to look at all day, or a phone form on the plant floor, Enterprise DNA can build one on top of the same database. If you need the answers more than the screens, this is cheaper, faster and yours.
 
 Installed and run for you: https://enterprisedna.co/omni/instead-of/intelex

@@ -40,11 +40,45 @@
 
 Management of Change for Claude Code does the job you pay Intelex for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Intelex dashboard cannot.
 
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Intelex per year, all in, with a source. -->
+Intelex's entry Safety Essentials plan starts at US$44 per user a month with a 25-user minimum, billed annually, and Management of Change is not in it: it sits in the Advanced and Enterprise plans, which Intelex quotes privately ([intelex.com/request-price](https://www.intelex.com/request-price), checked 2026-11-04). Many sites end up paying for a whole safety suite to get one change control workflow.
 
 Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=intelex).
 
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
+It is change control for process plants: chemical blenders, food and drink factories, cool stores with ammonia refrigeration, water and wastewater plants, and any site where a new pump, a new chemical or a bypassed alarm can hurt someone. Every change is raised, given a risk level, technically justified, reviewed, signed off by the right roles, checked before start-up, and closed out with its procedures and drawings updated. Temporary changes carry an expiry, emergency repairs collect their sign-offs after the fact, and changes at major hazard facilities cannot start up until the regulator notice is recorded.
+
+### Ten questions Intelex will not answer for you
+
+These run against the demo data today. Ask them in plain words.
+
+1. Which temporary changes have passed their expiry date and are still in place?
+2. Which changes went into operation with training or procedure updates still open?
+3. Which changes are waiting on a sign-off, and whose?
+4. Which changes at a major hazard site affect the safety case and have not been notified?
+5. Which emergency changes still lack their sign-offs a week after the repair?
+6. Which operating procedures and drawings are still to be updated after a change?
+7. How many days does a change take from request to start-up, by site and risk?
+8. Who holds the most overdue change actions?
+9. Which temporary changes have been extended more than once?
+10. Which changes have been in operation for a month without being closed out?
+
+### Your first hour: ten things to ask for
+
+1. "What needs attention this week?" (`/attention`)
+2. "Set up our sites: the Napier plant and the Hamilton depot. Napier is a lower tier major hazard facility."
+3. "Our sign-offs are process engineer, production manager and H&S for medium risk; add the GM for high." (`/customise`)
+4. "Bring across our Intelex change history" (`/import`, test run first)
+5. "Raise a temporary change: bypass the low-level trip on tank 3 for ten days while the probe is replaced."
+6. "What has to happen before MOC-0004 can start up?" (`/start-up` lists the blockers)
+7. "Which temporary changes have we extended more than once?"
+8. "Draft the change record for MOC-0006 for the shutdown file." (`/draft-moc-pack`)
+9. "Put our logo and colours on the change records." (edit `brand.json`, then `npm run docs`)
+10. "Write the Monday change review." (`/weekly-review`)
+
+### Documents and views
+
+- `npm run docs` renders the change record and the pre-start-up safety review certificate for every change, in your brand (`brand.json`), into `docs-out/`.
+- `npm run view` renders the week, the temporary changes in place, and the change register as read-only HTML pages into `views/`.
+- `/compliance` checks the records against the rules in [docs/compliance.md](docs/compliance.md), each with its source.
 
 ## Why no front end
 
@@ -63,7 +97,9 @@ npm install
 npm run demo
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Then open the folder in Claude Code and type `/attention`. On the demo data it finds an ammonia receiver bypass past its expiry, a control change running with operator training still open, and an emergency steam repair still waiting on two sign-offs.
+
+Or from the terminal: `npm run moc -- attention`.
 
 ### Use it with your own Postgres or Supabase
 
@@ -71,15 +107,43 @@ Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same 
 
 ## The commands
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
-
 | Command | What it does |
 |---|---|
-| `/...` | ... |
+| `/attention` | What needs a person this week: expired bypasses, start-ups with training open, missing sign-offs, overdue actions. |
+| `/register` | Every change with site, type, risk, status, sign-offs and open actions. |
+| `/open` | Changes not yet closed, rejected or cancelled. |
+| `/approvals` | Changes waiting on a sign-off, and which role is missing. |
+| `/temporary` | Temporary and emergency changes in place, with days to expiry. |
+| `/actions` | Every open change action. |
+| `/overdue` | Overdue actions, and pre-start-up actions still open after start-up. |
+| `/safety-case` | Major hazard site changes that affect the safety case, and whether the regulator was told. |
+| `/stats` | Changes by site and risk, with days from request to start-up. |
+| `/workload` | Open and overdue actions by person. |
+| `/compliance` | The records checked against the rules in docs/compliance.md. |
+| `/change` | One change: details, risk reviews, sign-offs, actions, history. |
+| `/raise` | Raise a permanent, temporary or emergency change. |
+| `/submit` | Send a change for review with its risk, technical basis and safety impact. |
+| `/add-review` | Record a what-if, HAZOP, checklist, JSA or bowtie review. |
+| `/approve` | Record one role's sign-off or rejection. Never overwritten. |
+| `/add-action` | Add a before or after start-up action. |
+| `/complete-action` | Close an action with its evidence. |
+| `/notify-regulator` | Record the notice given to WorkSafe or your state regulator. |
+| `/pssr` | Record the pre-start-up safety review (refused while anything is open). |
+| `/start-up` | Put a change into operation, after every gate passes. |
+| `/extend` | Extend a temporary change, with a reason. |
+| `/close` | Close out a change; temporary ones record reverted or made permanent. |
+| `/reject`, `/cancel` | End a change that never went into operation. |
+| `/import` | Bring change and action history across from an Intelex export. |
+| `/export` | A complete private snapshot of every table. |
+| `/draft-moc-pack` | The change record for one change, drafted to drafts/. |
+| `/weekly-review` | The Monday change review, written from attention, approvals and temporary. |
+| `/sites`, `/people`, `/rules`, `/activity` | Reference lists and the append-only log. |
+| `/customise` | Add a field, rename a role, change a sign-off rule, in plain language. |
+| `/new-view` | Add a read-only report in your brand. |
 
 ## Instead of Intelex
 
-<!-- TODO(author): how to bring data across from Intelex; link docs/replace-intelex.md -->
+Export your Management of Change report view and its actions from Intelex as CSV, set up your sites, run `npm run moc -- import intelex --changes=moc.csv --actions=moc-actions.csv --dry-run --actor="Your Name"`, check the counts, then run it for real. Column names vary by configuration, so the importer reports what it cannot map and never guesses. Sign-offs, risk review worksheets and attachments do not come across in a CSV. Full guide: [docs/replace-intelex.md](docs/replace-intelex.md).
 
 ## Architecture
 

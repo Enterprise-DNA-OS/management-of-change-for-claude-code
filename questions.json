@@ -1,0 +1,12 @@
+[
+  "Which temporary changes have passed their expiry date and are still in place?",
+  "Which changes went into operation with training or procedure updates still open?",
+  "Which changes are waiting on a sign-off, and whose?",
+  "Which changes at a major hazard site affect the safety case and have not been notified?",
+  "Which emergency changes still lack their sign-offs a week after the repair?",
+  "Which operating procedures and drawings are still to be updated after a change?",
+  "How many days does a change take from request to start-up, by site and risk?",
+  "Who holds the most overdue change actions?",
+  "Which temporary changes have been extended more than once?",
+  "Which changes have been in operation for a month without being closed out?"
+]

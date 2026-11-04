@@ -1,11 +1,59 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "moc-record",
+    "title": "Management of change record",
+    "for_each": "select id, code from changes where status not in ('cancelled') order by code",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "The change",
+        "layout": "record",
+        "sql": "select c.code, c.title, s.name as site, c.change_type, c.classification, c.risk_level, c.status, c.requested_by, c.owner, c.raised_on, c.expires_on, c.description from changes c join sites s on s.id = c.site_id where c.id = $1"
+      },
+      {
+        "title": "Before the change: what was considered",
+        "layout": "record",
+        "sql": "select technical_basis, safety_impact, affects_procedures, affects_drawings, affects_safety_case, regulator_notified_on, regulator_reference from changes where id = $1"
+      },
+      {
+        "title": "Risk reviews",
+        "sql": "select method, held_on, leader, attendees, risk_before, risk_after, findings from risk_reviews where change_id = $1 order by held_on"
+      },
+      {
+        "title": "Sign-offs",
+        "sql": "select role, person, decision, decided_on, note from approvals where change_id = $1 order by role"
+      },
+      {
+        "title": "Actions",
+        "sql": "select code, phase, kind, description, owner, due, done_on, evidence from actions where change_id = $1 order by phase, due"
+      }
+    ]
+  },
+  {
+    "name": "pssr-certificate",
+    "title": "Pre-start-up safety review",
+    "for_each": "select id, code from changes where pssr_on is not null order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Change",
+        "layout": "record",
+        "sql": "select c.code, c.title, s.name as site, c.classification, c.risk_level, c.expires_on from changes c join sites s on s.id = c.site_id where c.id = $1"
+      },
+      {
+        "title": "Confirmed before start-up",
+        "note": "Each pre-start-up action with the evidence recorded against it: construction to design, procedures in place, people trained.",
+        "sql": "select code, kind, description, owner, done_on, evidence from actions where change_id = $1 and phase = 'pre_startup' order by code"
+      },
+      {
+        "title": "Sign-offs held at the review",
+        "sql": "select role, person, decision, decided_on from approvals where change_id = $1 order by role"
+      },
+      {
+        "title": "Review",
+        "layout": "record",
+        "sql": "select pssr_by as reviewed_by, pssr_on as reviewed_on, pssr_note as note, started_up_on from changes where id = $1"
+      }
     ]
   }
 ]

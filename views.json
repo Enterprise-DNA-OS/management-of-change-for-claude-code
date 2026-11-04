@@ -1,13 +1,41 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Management of Change for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Management of change: this week",
     "sections": [
       {
         "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "note": "Breaches first: changes in operation outside their controls. Then due this week, then housekeeping.",
+        "sql": "select code, site, title, owner, rule, detail, days from change_attention order by severity, days desc nulls last, code"
+      },
+      {
+        "title": "Waiting on sign-off",
+        "sql": "select code, site, title, risk_level as risk, status, approvals_missing as missing, age_days from change_register where approvals_missing <> '' and status in ('review','approved','started_up') order by age_days desc"
+      }
+    ]
+  },
+  {
+    "name": "temporary",
+    "title": "Temporary and emergency changes in place",
+    "sections": [
+      {
+        "title": "In operation",
+        "note": "A temporary change past its expiry is a breach of its own approval. Extend it with a reason or put the plant back.",
+        "sql": "select code, site, title, classification as class, started_up_on, expires_on, case when expires_on is null then null else expires_on - current_date end as days_left from change_register where classification in ('temporary','emergency') and status = 'started_up' order by expires_on nulls last"
+      }
+    ]
+  },
+  {
+    "name": "register",
+    "title": "Change register",
+    "sections": [
+      {
+        "title": "Open changes",
+        "sql": "select code, site, title, change_type as type, classification as class, risk_level as risk, status, owner, target_date, open_actions from change_register where status not in ('closed','rejected','cancelled') order by code"
+      },
+      {
+        "title": "Open actions",
+        "sql": "select code, change, site, phase, kind, description, owner, due, attention from action_queue where done_on is null order by due"
       }
     ]
   }
